@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      - 'ACCEPT_EULA=yes'
+      - 'MSSQL_PID=express'
+      - 'MSSQL_SA_PASSWORD=verYs3cret'
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./docker/init:/init
+    networks:
+      - carapp-network
+    command: /bin/bash /init/init.sh
+
+volumes:
+  sqlserver_data:
+
+networks:
+  carapp-network:
+    driver: bridge
