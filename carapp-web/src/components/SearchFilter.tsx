@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+
+type SearchParams = {
+  plateNumber?: string;
+  model?: string;
+  year?: number;
+  brand?: string;
+};
+
+type SearchType = keyof SearchParams;
 
 interface SearchFilterProps {
   onSearch: (params: {
@@ -11,26 +20,42 @@ interface SearchFilterProps {
 }
 
 const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch, onReset }) => {
-  const [searchType, setSearchType] = useState<string>('plateNumber');
+  const [searchType, setSearchType] = useState<SearchType>('plateNumber');
   const [searchValue, setSearchValue] = useState<string>('');
+  const lastSearchRef = useRef<string>('');
 
   const handleSearch = () => {
-    if (!searchValue.trim()) {
-      onReset();
+    const trimSearchValue = searchValue.trim();
+
+    if (!trimSearchValue) {
       return;
     }
 
-    const params: any = {};
-    if (searchType === 'year') {
-      params.year = parseInt(searchValue);
-    } else {
-      params[searchType] = searchValue;
+    if (lastSearchRef.current === trimSearchValue) {
+      return;
     }
+
+    const params: SearchParams = {};
+    if (searchType === 'year') {
+      const parsed = parseInt(trimSearchValue);
+      if (Number.isNaN(parsed)) {
+        return;
+      }
+      params.year = parsed;
+    } else {
+      params[searchType] = trimSearchValue;
+    }
+
+    lastSearchRef.current = trimSearchValue;
     onSearch(params);
   };
 
   const handleReset = () => {
+    if (!searchValue) {
+      return;
+    }
     setSearchValue('');
+    lastSearchRef.current = '';
     onReset();
   };
 
@@ -38,6 +63,13 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch, onReset }) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value as SearchType;
+    setSearchType(value);
+    setSearchValue('');
+    lastSearchRef.current = '';
   };
 
   return (
@@ -55,7 +87,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch, onReset }) => {
         <div className="flex flex-col sm:flex-row gap-3">
           <select
             value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
+            onChange={handleTypeChange}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="plateNumber">Buscar por Placa</option>

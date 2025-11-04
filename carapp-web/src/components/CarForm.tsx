@@ -41,7 +41,8 @@ const CarForm: React.FC<CarFormProps> = ({ car, onSubmit, onClose }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO: Implementar carga de archivo
+    console.log(e);
+    // TODO: Implementar carga de archivo
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,8 +52,12 @@ const CarForm: React.FC<CarFormProps> = ({ car, onSubmit, onClose }) => {
 
     try {
       await onSubmit(formData);
-    } catch (err: any) {
-      setError(err.message || 'Error al guardar el auto');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Error al guardar el auto');
+      } else {
+        setError(String(err) || 'Error al guardar el auto');
+      }
     } finally {
       setLoading(false);
     }
