@@ -52,7 +52,7 @@ Asegúrate de tener SQL Server corriendo y configura las credenciales en `applic
 
 
 ```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=carapp_db
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=carapp_db;encrypt=true;trustServerCertificate=true
 spring.datasource.username=tu_usuario
 spring.datasource.password=tu_password
 spring.jpa.hibernate.ddl-auto=update
@@ -80,7 +80,7 @@ docker compose up -d
 Configura las credenciales en `application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=carapp_db
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=carapp_db;encrypt=true;trustServerCertificate=true
 spring.datasource.username=carapp_user
 spring.datasource.password=Password123*
 spring.jpa.hibernate.ddl-auto=update
